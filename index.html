@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>2627年度親子旅行抽獎</title>
+  <!-- 載入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 載入 Noto Sans TC 與 Inter 字體 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=Noto+Sans+TC:wght@500;700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    // 配置 Tailwind 客製化色彩與字體，貼合活潑親子旅行主題
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', '"Inter"', 'sans-serif'],
+          },
+          colors: {
+            skyTravel: {
+              50: '#F0F9FF',
+              100: '#E0F2FE',
+              400: '#38BDF8',
+              500: '#0EA5E9',
+              600: '#0284C7',
+            },
+            coralTravel: {
+              50: '#FFF5F2',
+              100: '#FFE4DC',
+              400: '#FB7158',
+              500: '#F45136',
+              600: '#DC3A1E',
+            },
+            amberSunny: {
+              50: '#FFFBEB',
+              100: '#FEF3C7',
+              400: '#FBBF24',
+              500: '#F59E0B',
+            },
+            mintBadge: {
+              50: '#ECFDF5',
+              100: '#D1FAE5',
+              500: '#10B981',
+              600: '#059669',
+            }
+          },
+          boxShadow: {
+            tactile: '0 6px 0 rgba(14, 116, 144, 0.22), 0 12px 24px rgba(15, 23, 42, 0.12)',
+            cta: '0 7px 0 #B92B14, 0 14px 26px rgba(244, 81, 54, 0.35)',
+            card: '0 10px 30px -5px rgba(2, 132, 199, 0.14), 0 4px 12px -2px rgba(15, 23, 42, 0.06)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* iPad 觸控防誤觸與流暢體驗設定 */
+    html, body {
+      font-family: 'Noto Sans TC', 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      overscroll-behavior: none;
+      background: linear-gradient(165deg, #E0F2FE 0%, #F0F9FF 42%, #FFFBEB 85%, #ECFDF5 100%);
+      min-height: 100dvh;
+    }
+
+    /* 裝飾性雲朵與旅行徽章輕微浮動動畫 */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(1.5deg); }
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.88) translateY(12px); }
+      100% { opacity: 1; transform: scale(1) translateY(0px); }
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.85; }
+      70% { transform: scale(1.12); opacity: 0; }
+      100% { transform: scale(1.12); opacity: 0; }
+    }
+
+    .animate-float-slow {
+      animation: floatSlow 5.5s ease-in-out infinite;
+    }
+    .animate-pop-in {
+      animation: popIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .animate-pulse-ring {
+      animation: pulseRing 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    }
+
+    /* 實體按鍵按壓回饋 */
+    .btn-cta:active:not(:disabled) {
+      transform: translateY(4px);
+      box-shadow: 0 3px 0 #B92B14, 0 6px 14px rgba(244, 81, 54, 0.3);
+    }
+    .btn-tactile:active:not(:disabled) {
+      transform: translateY(3px);
+    }
+
+    /* 轉盤容器確保正方形且適應 iPad 螢幕 */
+    .wheel-stage {
+      position: relative;
+      width: min(76vw, 440px);
+      height: min(76vw, 440px);
+    }
+    @media (min-width: 768px) and (orientation: landscape) {
+      .wheel-stage {
+        width: min(46vw, 56dvh, 490px);
+        height: min(46vw, 56dvh, 490px);
+      }
+    }
+    @media (min-width: 768px) and (orientation: portrait) {
+      .wheel-stage {
+        width: min(68vw, 480px);
+        height: min(68vw, 480px);
+      }
+    }
+
+    /* 自訂捲軸（名單與紀錄彈窗用） */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(14, 165, 233, 0.35);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden relative">
+
+  <!-- 背景裝飾元素：晴空雲朵、指南針與行李徽章（pointer-events-none 不干擾觸控） -->
+  <div class="pointer-events-none fixed inset-0 overflow-hidden z-0" aria-hidden="true">
+    <!-- 左上雲朵 -->
+    <svg class="absolute -top-4 left-4 w-32 md:w-44 text-white/80 animate-float-slow" viewBox="0 0 180 90" fill="currentColor">
+      <path d="M38 76h106c18 0 32-12 32-28 0-15-11-27-26-28-5-16-20-20-34-16C106-8 82-4 72 12c-5-2-11-3-17-3-19 0-34 14-35 32C8 45 0 54 0 64c0 7 6 12 14 12h24z"/>
+    </svg>
+    <!-- 右上指南針徽章 -->
+    <svg class="absolute top-14 right-5 w-16 h-16 md:w-24 md:h-24 text-skyTravel-400/25 animate-float-slow" style="animation-delay: 1.2s;" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="5" stroke-dasharray="8 6"/>
+      <polygon points="50,16 58,46 50,54 42,46" fill="#F45136" fill-opacity="0.35"/>
+      <polygon points="50,84 58,54 50,46 42,54" fill="#0EA5E9" fill-opacity="0.35"/>
+      <circle cx="50" cy="50" r="6" fill="#F59E0B" fill-opacity="0.5"/>
+    </svg>
+    <!-- 左下行李箱圖示 -->
+    <svg class="hidden sm:block absolute bottom-6 left-6 w-20 h-20 text-amberSunny-400/30 animate-float-slow" style="animation-delay: 2s;" viewBox="0 0 100 100" fill="currentColor">
+      <rect x="36" y="14" width="28" height="14" rx="5" fill="none" stroke="currentColor" stroke-width="6"/>
+      <rect x="20" y="28" width="60" height="56" rx="12"/>
+      <rect x="33" y="28" width="8" height="56" fill="#FFFBEB" fill-opacity="0.5"/>
+      <rect x="59" y="28" width="8" height="56" fill="#FFFBEB" fill-opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- 彩帶慶祝畫布（全螢幕覆蓋但不阻擋點擊） -->
+  <canvas id="confettiCanvas" class="pointer-events-none fixed inset-0 z-50 w-full h-full"></canvas>
+
+  <!-- 主應用程式外框 -->
+  <div id="app" class="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-5 flex flex-col min-h-dvh justify-between gap-3 sm:gap-4">
+
+    <!-- 頂部導覽與旅途進度列 -->
+    <header class="bg-white/90 backdrop-blur-md border-2 border-skyTravel-100 rounded-3xl px-4 py-3 sm:px-6 sm:py-3.5 shadow-card flex flex-wrap items-center justify-between gap-3">
+      <!-- 品牌標題 -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amberSunny-400 via-coralTravel-400 to-coralTravel-500 flex items-center justify-center text-white shadow-md shrink-0">
+          <!-- 飛機與星星旅行徽章 SVG -->
+          <svg class="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-lg sm:text-2xl font-black tracking-tight text-slate-800 truncate">
+              2627年度親子旅行抽獎
+            </h1>
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-mintBadge-100 text-mintBadge-600 border border-mintBadge-500/20">
+              <span>🎡</span> 轉一圈同時抽 5 位
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
+            共 4 輪・每輪 5 份禮物（合計 20 位）・不重複中獎・人頭計算（初始 59 人）
+          </p>
+        </div>
+      </div>
+
+      <!-- 狀態摘要與快捷功能按鈕區（iPad 大觸控目標） -->
+      <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+        <!-- 剩餘人數徽章 -->
+        <div class="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-skyTravel-50 border border-skyTravel-200">
+          <span class="text-xs font-bold text-skyTravel-600">剩餘池</span>
+          <span id="remainingBadge" class="text-lg sm:text-xl font-black text-skyTravel-600 tabular-nums">59</span>
+          <span class="text-xs font-bold text-slate-400">/ 59</span>
+        </div>
+
+        <!-- 已抽總數徽章 -->
+        <div class="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-amberSunny-50 border border-amberSunny-200">
+          <span class="text-xs font-bold text-amber-700">已中獎</span>
+          <span id="totalWonBadge" class="text-lg sm:text-xl font-black text-amber-600 tabular-nums">0</span>
+          <span class="text-xs font-bold text-slate-400">/ 20</span>
+        </div>
+
+        <!-- 音效開關按鈕 -->
+        <button
+          id="soundToggleBtn"
+          type="button"
+          class="btn-tactile min-h-[48px] px-3.5 rounded-2xl bg-white hover:bg-slate-50 border-2 border-slate-200 text-slate-700 font-bold text-sm flex items-center gap-1.5 shadow-sm transition cursor-pointer"
+          aria-label="切換音效"
+          title="音效開關"
+        >
+          <span id="soundIcon" class="text-lg">🔊</span>
+          <span id="soundLabel" class="hidden md:inline">音效開</span>
+        </button>
+
+        <!-- 查看/複製完整中獎名單按鈕 -->
+        <button
+          id="openWinnersModalBtn"
+          type="button"
+          class="btn-tactile min-h-[48px] px-4 rounded-2xl bg-mintBadge-500 hover:bg-mintBadge-600 text-white font-extrabold text-sm shadow-md flex items-center gap-1.5 transition cursor-pointer"
+        >
+          <span>📋</span>
+          <span>中獎名單與複製</span>
+        </button>
+
+        <!-- 重設整場活動按鈕 -->
+        <button
+          id="resetAllBtn"
+          type="button"
+          class="btn-tactile min-h-[48px] px-3.5 rounded-2xl bg-white hover:bg-rose-50 border-2 border-rose-200 text-rose-600 font-bold text-sm flex items-center gap-1.5 shadow-sm transition cursor-pointer"
+          title="重設全部抽獎紀錄"
+        >
+          <span>🔄</span>
+          <span class="hidden sm:inline">重設</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 4 輪分頁選擇器（第 1 輪 ～ 第 4 輪） -->
+    <nav class="grid grid-cols-4 gap-2 sm:gap-3" aria-label="抽獎輪次選擇">
+      <!-- 由 JS 渲染 4 個輪次按鈕 -->
+    </nav>
+
+    <!-- 主要抽獎工作區：iPad 橫屏左右分欄、直屏上下排列 -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-center flex-1">
+
+      <!-- 左/上方：大轉盤互動舞台 -->
+      <section class="lg:col-span-7 bg-white/85 backdrop-blur-md border-2 border-white rounded-[2rem] p-4 sm:p-6 shadow-card flex flex-col items-center justify-center relative">
+        <!-- 當前輪次提示條 -->
+        <div class="w-full flex items-center justify-between gap-2 mb-3 sm:mb-4 px-1">
+          <div class="flex items-center gap-2">
+            <span id="currentRoundPill" class="px-3.5 py-1.5 rounded-full bg-coralTravel-500 text-white font-black text-sm sm:text-base shadow-sm">
+              第 1 輪
+            </span>
+            <span id="roundStatusText" class="text-xs sm:text-sm font-bold text-slate-600">
+              本輪需抽出 5 位幸運得主（轉一圈同時選出）
+            </span>
+          </div>
+          <button
+            id="viewPoolBtn"
+            type="button"
+            class="text-xs sm:text-sm font-extrabold text-skyTravel-600 hover:text-skyTravel-700 bg-skyTravel-50 hover:bg-skyTravel-100 px-3 py-1.5 rounded-xl border border-skyTravel-200 transition cursor-pointer"
+          >
+            👥 檢視名單（<span id="poolCountBtnText">59</span>人）
+          </button>
+        </div>
+
+        <!-- 轉盤舞台 -->
+        <div class="wheel-stage flex items-center justify-center my-1">
+          <!-- 外圈旅行裝飾光環 -->
+          <div class="absolute -inset-2 sm:-inset-3 rounded-full bg-gradient-to-tr from-skyTravel-400/30 via-amberSunny-400/35 to-mintBadge-500/30 blur-sm pointer-events-none"></div>
+
+          <!-- 轉盤 Canvas -->
+          <canvas id="wheelCanvas" class="w-full h-full rounded-full shadow-tactile cursor-pointer"></canvas>
+
+          <!-- 中心出發按鈕（點擊亦可啟動轉盤） -->
+          <button
+            id="centerSpinBtn"
+            type="button"
+            class="absolute z-20 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-b from-amberSunny-400 via-coralTravel-400 to-coralTravel-600 text-white font-black text-base sm:text-lg shadow-cta border-4 border-white flex flex-col items-center justify-center leading-tight transition transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            aria-label="開始抽獎"
+          >
+            <span class="text-xl sm:text-2xl leading-none">🎒</span>
+            <span class="mt-0.5 tracking-wider">抽獎</span>
+          </button>
+        </div>
+
+        <!-- 5 個同時選中指標的圖例說明 -->
+        <div class="mt-4 w-full max-w-xl bg-skyTravel-50/90 border border-skyTravel-200/80 rounded-2xl px-3.5 py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs sm:text-sm font-bold text-slate-700">
+          <span class="text-skyTravel-700 font-extrabold">🎯 同時 5 方位定格選取：</span>
+          <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-full bg-[#EF4444] inline-block border border-white shadow"></i>#1</span>
+          <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-full bg-[#F59E0B] inline-block border border-white shadow"></i>#2</span>
+          <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-full bg-[#10B981] inline-block border border-white shadow"></i>#3</span>
+          <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-full bg-[#3B82F6] inline-block border border-white shadow"></i>#4</span>
+          <span class="inline-flex items-center gap-1"><i class="w-3 h-3 rounded-full bg-[#8B5CF6] inline-block border border-white shadow"></i>#5</span>
+        </div>
+
+        <!-- 主要大按鈕區（iPad 黃金觸控高度 56px+） -->
+        <div class="mt-4 w-full max-w-xl flex flex-col sm:flex-row gap-3">
+          <button
+            id="primaryDrawBtn"
+            type="button"
+            class="btn-cta flex-1 min-h-[58px] px-6 py-3.5 rounded-2xl bg-gradient-to-r from-coralTravel-500 via-coralTravel-400 to-amberSunny-500 text-white font-black text-lg sm:text-xl tracking-wide shadow-cta flex items-center justify-center gap-2.5 transition disabled:opacity-45 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <span class="text-2xl">🎡</span>
+            <span id="primaryDrawBtnText">開始抽獎（一次抽 5 位）</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 右/下方：當前輪次 5 份禮物得主看板 & 撤銷重抽控制 -->
+      <section class="lg:col-span-5 bg-white/90 backdrop-blur-md border-2 border-white rounded-[2rem] p-4 sm:p-6 shadow-card flex flex-col justify-between h-full">
+        <div>
+          <div class="flex items-center justify-between gap-2 pb-3 border-b-2 border-slate-100">
+            <div>
+              <h2 id="panelRoundTitle" class="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+                <span>🎁</span>
+                <span>第 1 輪中獎名單</span>
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+                每輪 5 個禮物・可隨時「撤銷重抽」單一得主
+              </p>
+            </div>
+            <span id="roundSlotsCounter" class="px-3 py-1 rounded-xl bg-amberSunny-100 text-amber-800 font-black text-sm tabular-nums">
+              0 / 5 位
+            </span>
+          </div>
+
+          <!-- 5 個禮物槽位卡片列表 -->
+          <div id="roundWinnersList" class="mt-3.5 space-y-2.5">
+            <!-- 由 JS 渲染 5 個槽位 -->
+          </div>
+        </div>
+
+        <!-- 底部快速操作列 -->
+        <div class="mt-4 pt-3.5 border-t-2 border-slate-100 flex flex-wrap items-center justify-between gap-2.5">
+          <button
+            id="nextRoundQuickBtn"
+            type="button"
+            class="btn-tactile flex-1 min-h-[48px] px-4 py-2.5 rounded-2xl bg-skyTravel-500 hover:bg-skyTravel-600 text-white font-extrabold text-sm sm:text-base shadow-md flex items-center justify-center gap-1.5 transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <span>前往下一輪</span>
+            <span>➔</span>
+          </button>
+
+          <button
+            id="openFullLogBtn"
+            type="button"
+            class="btn-tactile min-h-[48px] px-4 py-2.5 rounded-2xl bg-amberSunny-100 hover:bg-amberSunny-200 text-amber-900 border border-amberSunny-300 font-extrabold text-sm sm:text-base flex items-center justify-center gap-1.5 transition cursor-pointer"
+          >
+            <span>📜 全部 4 輪總覽</span>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 彈窗 1：本輪 5 位得主揭曉慶祝視窗 -->
+  <div id="celebrationModal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-slate-900/55 backdrop-blur-sm">
+    <div class="animate-pop-in bg-white rounded-[2rem] max-w-xl w-full p-5 sm:p-7 shadow-2xl border-4 border-amberSunny-300 relative overflow-hidden">
+      <!-- 頂部旅途裝飾橫幅 -->
+      <div class="text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-coralTravel-100 text-coralTravel-600 font-black text-xs sm:text-sm mb-2">
+          <span>🎉 親子旅行幸運揭曉</span>
+          <span id="modalRoundBadge">・第 1 輪</span>
+        </div>
+        <h3 id="modalTitleText" class="text-2xl sm:text-3xl font-black text-slate-800">
+          恭喜本輪 5 位幸運得主！
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+          已自動從剩餘抽獎名單中移除，避免重複中獎
+        </p>
+      </div>
+
+      <!-- 5 位得主展示卡片 -->
+      <div id="modalWinnersGrid" class="mt-4 space-y-2.5 max-h-[52dvh] overflow-y-auto custom-scroll pr-1">
+        <!-- 由 JS 填入 -->
+      </div>
+
+      <!-- 彈窗按鈕 -->
+      <div class="mt-5 flex flex-col sm:flex-row gap-2.5">
+        <button
+          id="closeCelebrationBtn"
+          type="button"
+          class="btn-tactile flex-1 min-h-[52px] px-5 py-3 rounded-2xl bg-gradient-to-r from-skyTravel-500 to-mintBadge-500 text-white font-black text-base shadow-lg transition cursor-pointer"
+        >
+          太棒了，確認保留！
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 彈窗 2：查看/複製全部 4 輪（共 20 人）中獎名單與撤銷重抽 -->
+  <div id="winnersLogModal" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-sm">
+    <div class="animate-pop-in bg-white rounded-[2rem] max-w-4xl w-full max-h-[90dvh] flex flex-col shadow-2xl border-2 border-skyTravel-200 overflow-hidden">
+      <!-- 標題列 -->
+      <div class="px-5 py-4 sm:px-6 sm:py-5 bg-gradient-to-r from-skyTravel-50 via-amberSunny-50 to-mintBadge-50 border-b border-slate-200 flex items-center justify-between gap-3">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-800 flex items-center gap-2">
+            <span>🏆</span>
+            <span>全部 4 輪中獎名單總覽（共 20 人）</span>
+          </h3>
+          <p id="logSummarySubtext" class="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
+            已抽出 0 / 20 位・剩餘抽獎池 59 人
+          </p>
+        </div>
+        <button
+          id="closeWinnersModalBtn"
+          type="button"
+          class="min-h-[48px] min-w-[48px] rounded-2xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 font-black text-xl flex items-center justify-center transition cursor-pointer"
+          aria-label="關閉視窗"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- 4 輪內容區 -->
+      <div id="allRoundsLogContainer" class="p-4 sm:p-6 overflow-y-auto custom-scroll grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+        <!-- 由 JS 渲染 4 輪卡片 -->
+      </div>
+
+      <!-- 複製狀態提示列 -->
+      <div id="copyFeedbackBanner" class="hidden mx-4 sm:mx-6 mb-2 px-4 py-2.5 rounded-2xl bg-mintBadge-100 border border-mintBadge-500/30 text-mintBadge-600 font-extrabold text-sm text-center">
+        ✅ 已複製全部 4 輪中獎名單到剪貼簿，可直接貼上至 LINE / 記事本 / 群組！
+      </div>
+
+      <!-- 底部操作按鈕 -->
+      <div class="px-5 py-4 sm:px-6 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <button
+          id="copyAllWinnersBtn"
+          type="button"
+          class="btn-cta flex-1 min-h-[52px] px-6 py-3 rounded-2xl bg-gradient-to-r from-coralTravel-500 to-amberSunny-500 text-white font-black text-base shadow-md flex items-center justify-center gap-2 transition cursor-pointer"
+        >
+          <span>📋</span>
+          <span>一鍵複製完整中獎名單</span>
+        </button>
+        <button
+          id="doneWinnersModalBtn"
+          type="button"
+          class="btn-tactile min-h-[52px] px-6 py-3 rounded-2xl bg-white hover:bg-slate-100 border-2 border-slate-200 text-slate-700 font-extrabold text-base transition cursor-pointer"
+        >
+          返回抽獎
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 彈窗 3：檢視目前剩餘抽獎池名單 -->
+  <div id="poolModal" class="fixed inset-0 z-40 hidden items-center justify-center p-3 sm:p-5 bg-slate-900/55 backdrop-blur-sm">
+    <div class="animate-pop-in bg-white rounded-[2rem] max-w-3xl w-full max-h-[86dvh] flex flex-col shadow-2xl border-2 border-skyTravel-200 overflow-hidden">
+      <div class="px-5 py-4 bg-skyTravel-50 border-b border-skyTravel-100 flex items-center justify-between gap-3">
+        <div>
+          <h3 class="text-lg sm:text-xl font-black text-slate-800">
+            👥 目前剩餘抽獎池名單（<span id="poolModalCount">59</span> 位）
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-500 font-medium">
+            家庭成員已依個人資料姓名精準拆分；已中獎者會自動移出
+          </p>
+        </div>
+        <button
+          id="closePoolModalBtn"
+          type="button"
+          class="min-h-[48px] min-w-[48px] rounded-2xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 font-black text-xl flex items-center justify-center transition cursor-pointer"
+          aria-label="關閉名單視窗"
+        >
+          ✕
+        </button>
+      </div>
+      <div id="poolListGrid" class="p-4 sm:p-5 overflow-y-auto custom-scroll grid grid-cols-2 sm:grid-cols-3 gap-2 flex-1">
+        <!-- 由 JS 渲染剩餘名單 -->
+      </div>
+      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button
+          id="closePoolModalFooterBtn"
+          type="button"
+          class="btn-tactile min-h-[48px] px-6 py-2.5 rounded-2xl bg-skyTravel-500 text-white font-extrabold text-sm sm:text-base transition cursor-pointer"
+        >
+          知道了
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 彈窗 4：自訂確認 / 提示對話框（替代原生 alert / confirm） -->
+  <div id="confirmDialog" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="animate-pop-in bg-white rounded-[2rem] max-w-md w-full p-6 shadow-2xl border-2 border-amberSunny-300">
+      <h4 id="confirmTitle" class="text-xl font-black text-slate-800">確認操作</h4>
+      <p id="confirmMessage" class="text-sm sm:text-base text-slate-600 font-medium mt-2 leading-relaxed">
+        確定要執行此操作嗎？
+      </p>
+      <div class="mt-6 flex items-center justify-end gap-3">
+        <button
+          id="confirmCancelBtn"
+          type="button"
+          class="btn-tactile min-h-[48px] px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-sm sm:text-base transition cursor-pointer"
+        >
+          取消
+        </button>
+        <button
+          id="confirmOkBtn"
+          type="button"
+          class="btn-tactile min-h-[48px] px-5 py-2.5 rounded-2xl bg-coralTravel-500 hover:bg-coralTravel-600 text-white font-black text-sm sm:text-base shadow-md transition cursor-pointer"
+        >
+          確定
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * ============================================================================
+     * 1. 名單資料建構（依個人資料檔案對應學生與家人姓名，人頭計算）
+     *    總計：29 位家長及學生 + 28 位教師 + 2 位校友 = 59 人
+     * ============================================================================
+     */
+    function buildInitialParticipants() {
+      const list = [];
+      let uidCounter = 1;
+
+      const pushPerson = (name, category) => {
+        list.push({
+          id: `p_${uidCounter++}`,
+          name,
+          category // 'family' | 'teacher' | 'alumni'
+        });
+      };
+
+      // 家長及學生（共 29 位，精準對應學生與家人姓名）
+      const familyMembers = [
+        '1A(20)王梓琳',
+        '1A(20)王梓琳家人 丁涼涼',
+        '1A(20)王梓琳家人 王鸿森',
+        '1B(24)陳玥同',
+        '1B(24)陳玥同家人 王娜',
+        '1B(31)劉士熙',
+        '1B(31)劉士熙家人 陳曉敏',
+        '1B(31)劉士熙家人 劉彥端',
+        '2A(2)陳文杰',
+        '2A(2)陳文杰家人 李韻芳',
+        '2A(8)何国强',
+        '2A(8)何国强家人 何秋华',
+        '2C(8)李江藍',
+        '2C(8)李江藍家人 张慧玉',
+        '3A(2)卜佳豪',
+        '3A(2)卜佳豪家人 王彦芳',
+        '3A(2)卜佳豪家人 卜佑珏',
+        '3A(2)卜佳豪家人 卜海军',
+        '3A(4)陳雅睿',
+        '3A(4)陳雅睿家人 陈映航',
+        '3A(4)陳雅睿家人 梁媚',
+        '3A(25)楊振琪',
+        '3A(25)楊振琪家人 周清清',
+        '3A(36)汪启中',
+        '3A(36)汪启中家人 李晓婷',
+        '4B(15)毛雲杰',
+        '4B(15)毛雲杰家人 毛碧志',
+        '5B(11)葉淳謙',
+        '5B(11)葉淳謙家人 陳慧文'
+      ];
+      familyMembers.forEach(name => pushPerson(name, 'family'));
+
+      // 28 位教師
+      const teachers = [
+        '吳嘉鳳校長', '黎智雄副校長', '陳翠瓊主任', '陳浩維老師', '陳承綱主任',
+        '馮芷茵老師', '郭仁山老師', '何建昌主任', '洪少萍主任', '晋美次仁老師',
+        '郭宇軒老師', '林劍凌老師', '林沛慧老師', '劉楚揚主任', '羅潔霞老師',
+        '李智浩主任', '李國棟老師', '吳志成老師', '布冠語老師', '杜可欣主任',
+        '黃漳銘主任', '黃彩玲老師', '王俊杰老師', '黃家麗老師', '黃嘉茵老師',
+        '謝麗思老師', '陳孝璟主任', '麥小薇老師'
+      ];
+      teachers.forEach(name => pushPerson(name, 'teacher'));
+
+      // 2 位校友
+      const alumni = ['司徒智誠先生', '孫嘉霖先生'];
+      alumni.forEach(name => pushPerson(name, 'alumni'));
+
+      return list;
+    }
+
+    /**
+     * ============================================================================
+     * 2. Web Audio 音效合成器（免外部音檔，支援 iPad 觸控解鎖與一鍵靜音）
+     * ============================================================================
+     */
+    const SoundFX = (() => {
+      let ctx = null;
+      let enabled = true;
+
+      function ensureContext() {
+        if (!enabled) return null;
+        if (!ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            ctx = new AudioCtx();
+          }
+        }
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+        return ctx;
+      }
+
+      // 轉盤經過扇區時的清脆刻度聲
+      function playTick(pitchFactor = 1) {
+        const c = ensureContext();
+        if (!c) return;
+        try {
+          const now = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(520 + pitchFactor * 260, now);
+          osc.frequency.exponentialRampToValueAtTime(220, now + 0.045);
+
+          gain.gain.setValueAtTime(0.11, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } catch (e) {
+          // 忽略音訊例外
+        }
+      }
+
+      // 抽中 5 位得主時的歡快旅途和弦音效
+      function playWinFanfare() {
+        const c = ensureContext();
+        if (!c) return;
+        try {
+          const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const now = c.currentTime + idx * 0.09;
+            const osc = c.createOscillator();
+            const gain = c.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+
+            gain.gain.setValueAtTime(0.001, now);
+            gain.gain.linearRampToValueAtTime(0.14, now + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+            osc.connect(gain);
+            gain.connect(c.destination);
+            osc.start(now);
+            osc.stop(now + 0.45);
+          });
+        } catch (e) {
+          // 忽略音訊例外
+        }
+      }
+
+      // 撤銷重抽提示音
+      function playUndo() {
+        const c = ensureContext();
+        if (!c) return;
+        try {
+          const now = c.currentTime;
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(420, now);
+          osc.frequency.exponentialRampToValueAtTime(260, now + 0.14);
+
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+          osc.connect(gain);
+          gain.connect(c.destination);
+          osc.start(now);
+          osc.stop(now + 0.16);
+        } catch (e) {
+          // 忽略音訊例外
+        }
+      }
+
+      return {
+        playTick,
+        playWinFanfare,
+        playUndo,
+        setEnabled(val) {
+          enabled = Boolean(val);
+        },
+        isEnabled() {
+          return enabled;
+        }
+      };
+    })();
+
+    /**
+     * ============================================================================
+     * 3. 彩帶慶祝動畫系統（Canvas）
+     * ============================================================================
+     */
+    const ConfettiSystem = (() => {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let animId = null;
+
+      const colors = ['#F45136', '#FBBF24', '#0EA5E9', '#10B981', '#8B5CF6', '#FB7185'];
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function burst(count = 130) {
+        resize();
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight * 0.36;
+
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 4 + Math.random() * 11;
+          particles.push({
+            x: cx + (Math.random() - 0.5) * 80,
+            y: cy + (Math.random() - 0.5) * 40,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 4,
+            size: 7 + Math.random() * 8,
+            color: colors[i % colors.length],
+            rotation: Math.random() * Math.PI * 2,
+            vRot: (Math.random() - 0.5) * 0.25,
+            gravity: 0.24 + Math.random() * 0.08,
+            drag: 0.985,
+            alpha: 1,
+            shape: i % 3 === 0 ? 'circle' : 'rect'
+          });
+        }
+
+        if (!animId) {
+          loop();
+        }
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        particles.forEach(p => {
+          p.vx *= p.drag;
+          p.vy = p.vy * p.drag + p.gravity;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.vRot;
+          if (p.y > window.innerHeight * 0.85) {
+            p.alpha -= 0.025;
+          }
+        });
+
+        particles = particles.filter(p => p.alpha > 0.02 && p.y < window.innerHeight + 60);
+
+        particles.forEach(p => {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color;
+
+          if (p.shape === 'circle') {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size * 0.55, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.65);
+          }
+          ctx.restore();
+        });
+
+        if (particles.length > 0) {
+          animId = requestAnimationFrame(loop);
+        } else {
+          cancelAnimationFrame(animId);
+          animId = null;
+          ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+      }
+
+      window.addEventListener('resize', () => {
+        if (particles.length > 0) resize();
+      });
+
+      return { burst };
+    })();
+
+    /**
+     * ============================================================================
+     * 4. 應用程式核心狀態與邏輯
+     *    - 4 輪（第 1 輪 ～ 第 4 輪），每輪 5 個禮物（共 20 人）
+     *    - 「轉一圈同時選出 5 位」：轉盤以 5 個均勻分佈的抽獎指標（每 72° 一支）
+     *      同時指向 5 個不同扇區，確保同一轉同時選出 5 位不重複得主！
+     * ============================================================================
+     */
+    const TOTAL_ROUNDS = 4;
+    const WINNERS_PER_ROUND = 5;
+    const INITIAL_POOL = buildInitialParticipants();
+
+    // 5 個同時選取指標的色彩與徽章設定
+    const POINTER_STYLES = [
+      { index: 1, color: '#EF4444', badgeBg: 'bg-red-500', textHex: '#DC2626', label: '禮物 #1' },
+      { index: 2, color: '#F59E0B', badgeBg: 'bg-amber-500', textHex: '#D97706', label: '禮物 #2' },
+      { index: 3, color: '#10B981', badgeBg: 'bg-emerald-500', textHex: '#059669', label: '禮物 #3' },
+      { index: 4, color: '#3B82F6', badgeBg: 'bg-blue-500', textHex: '#2563EB', label: '禮物 #4' },
+      { index: 5, color: '#8B5CF6', badgeBg: 'bg-violet-500', textHex: '#7C3AED', label: '禮物 #5' },
+    ];
+
+    // 活潑旅途配色扇區調色盤
+    const WHEEL_PALETTE = [
+      '#FFEDD5', // 暖杏
+      '#E0F2FE', // 晴空藍
+      '#DCFCE7', // 清新薄荷
+      '#FEF3C7', // 陽光黃
+      '#FFE4E6', // 珊瑚粉
+      '#EDE9FE', // 薰衣草紫
+    ];
+
+    const state = {
+      currentRound: 1, // 1..4
+      isSpinning: false,
+      wheelAngle: 0, // 目前轉盤弧度（順時針為正）
+      highlightedWinnerIds: new Set(), // 轉盤上高亮標示的本輪得主 ID
+      // rounds[roundNum] = array of winner objects: { slot, participant, drawnAt }
+      rounds: {
+        1: [],
+        2: [],
+        3: [],
+        4: []
+      }
+    };
+
+    // 取得目前尚未中獎的參與者名單
+    function getRemainingPool() {
+      const wonIds = new Set();
+      for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+        state.rounds[r].forEach(w => wonIds.add(w.participant.id));
+      }
+      return INITIAL_POOL.filter(p => !wonIds.has(p.id));
+    }
+
+    // 取得全部已中獎總數
+    function getTotalWinnersCount() {
+      return Object.values(state.rounds).reduce((sum, arr) => sum + arr.length, 0);
+    }
+
+    // 依目前角度計算 5 個固定外圍指標（分別位於 -90°, -18°, 54°, 126°, 198°）所指向的扇區索引
+    function getFivePointedIndices(poolLength, currentAngle) {
+      if (poolLength === 0) return [];
+      const arc = (Math.PI * 2) / poolLength;
+
+      // 5 個指標均勻環繞轉盤外圈（頂部 -Math.PI/2 為起點，每隔 72° = 2π/5 一支）
+      const pointerAngles = [0, 1, 2, 3, 4].map(k => {
+        const raw = -Math.PI / 2 + (k * Math.PI * 2) / WINNERS_PER_ROUND;
+        return ((raw % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      });
+
+      const chosenIndices = [];
+      const usedSet = new Set();
+
+      pointerAngles.forEach(pAngle => {
+        // 扇區 i 在畫布中的起始角為 currentAngle + i * arc
+        // 相對於轉盤本地座標的角度為：
+        const localAngle = (((pAngle - currentAngle) % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+        let idx = Math.floor(localAngle / arc) % poolLength;
+
+        // 若因扇區較少導致兩支指標落在同一扇區，順移至下一個未選扇區確保一次選出 5 位不重複
+        let guard = 0;
+        while (usedSet.has(idx) && guard < poolLength) {
+          idx = (idx + 1) % poolLength;
+          guard++;
+        }
+        usedSet.add(idx);
+        chosenIndices.push(idx);
+      });
+
+      return chosenIndices;
+    }
+
+    /**
+     * ============================================================================
+     * 5. HTML5 Canvas 轉盤繪製（支援 Retina 高解析度與 5 個同時選中指標）
+     * ============================================================================
+     */
+    const wheelCanvas = document.getElementById('wheelCanvas');
+    const wheelCtx = wheelCanvas.getContext('2d');
+
+    function drawWheel() {
+      const rect = wheelCanvas.getBoundingClientRect();
+      const size = Math.max(220, Math.min(rect.width || 360, rect.height || 360));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      wheelCanvas.width = size * dpr;
+      wheelCanvas.height = size * dpr;
+      wheelCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const cx = size / 2;
+      const cy = size / 2;
+      const outerRadius = size * 0.43;
+      const innerHubRadius = size * 0.145;
+
+      wheelCtx.clearRect(0, 0, size, size);
+
+      const pool = getRemainingPool();
+
+      // 繪製外圍木質/旅行邊框
+      wheelCtx.save();
+      wheelCtx.beginPath();
+      wheelCtx.arc(cx, cy, outerRadius + size * 0.032, 0, Math.PI * 2);
+      wheelCtx.fillStyle = '#0284C7';
+      wheelCtx.fill();
+      wheelCtx.lineWidth = 4;
+      wheelCtx.strokeStyle = '#FFFFFF';
+      wheelCtx.stroke();
+      wheelCtx.restore();
+
+      if (pool.length === 0) {
+        wheelCtx.save();
+        wheelCtx.beginPath();
+        wheelCtx.arc(cx, cy, outerRadius, 0, Math.PI * 2);
+        wheelCtx.fillStyle = '#F1F5F9';
+        wheelCtx.fill();
+        wheelCtx.fillStyle = '#475569';
+        wheelCtx.font = `800 ${Math.max(15, size * 0.042)}px "Noto Sans TC", sans-serif`;
+        wheelCtx.textAlign = 'center';
+        wheelCtx.textBaseline = 'middle';
+        wheelCtx.fillText('名單已全數抽出', cx, cy - size * 0.19);
+        wheelCtx.restore();
+        drawFivePointers(cx, cy, outerRadius, size);
+        return;
+      }
+
+      const arc = (Math.PI * 2) / pool.length;
+      const pointedIndices = getFivePointedIndices(pool.length, state.wheelAngle);
+
+      // 繪製每個參與者扇區
+      for (let i = 0; i < pool.length; i++) {
+        const startAngle = state.wheelAngle + i * arc;
+        const endAngle = startAngle + arc;
+        const participant = pool[i];
+        const isHighlighted = state.highlightedWinnerIds.has(participant.id);
+        const pointerMatchIdx = pointedIndices.indexOf(i);
+
+        wheelCtx.save();
+        wheelCtx.beginPath();
+        wheelCtx.moveTo(cx, cy);
+        wheelCtx.arc(cx, cy, outerRadius, startAngle, endAngle);
+        wheelCtx.closePath();
+
+        if (isHighlighted && !state.isSpinning && pointerMatchIdx !== -1) {
+          wheelCtx.fillStyle = '#FEF08A';
+        } else {
+          wheelCtx.fillStyle = WHEEL_PALETTE[i % WHEEL_PALETTE.length];
+        }
+        wheelCtx.fill();
+
+        wheelCtx.lineWidth = pool.length > 40 ? 1 : 1.5;
+        wheelCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        wheelCtx.stroke();
+
+        // 繪製扇區文字（依人數動態調整字級，確保清晰可讀）
+        const midAngle = startAngle + arc / 2;
+        wheelCtx.translate(cx, cy);
+        wheelCtx.rotate(midAngle);
+
+        const fontSize =
+          pool.length <= 16
+            ? Math.max(13, size * 0.033)
+            : pool.length <= 35
+            ? Math.max(10.5, size * 0.025)
+            : Math.max(9, size * 0.021);
+
+        wheelCtx.font = `800 ${fontSize}px "Noto Sans TC", sans-serif`;
+        wheelCtx.textAlign = 'right';
+        wheelCtx.textBaseline = 'middle';
+        wheelCtx.fillStyle = isHighlighted && !state.isSpinning ? '#B91C1C' : '#1E293B';
+
+        const maxTextWidth = outerRadius - innerHubRadius - size * 0.045;
+        let label = participant.name;
+        if (wheelCtx.measureText(label).width > maxTextWidth) {
+          while (label.length > 2 && wheelCtx.measureText(label + '…').width > maxTextWidth) {
+            label = label.slice(0, -1);
+          }
+          label += '…';
+        }
+
+        wheelCtx.fillText(label, outerRadius - size * 0.022, 0);
+        wheelCtx.restore();
+      }
+
+      // 繪製環繞轉盤的 5 支指標（轉一圈同時選出 5 位）
+      drawFivePointers(cx, cy, outerRadius, size);
+    }
+
+    function drawFivePointers(cx, cy, outerRadius, size) {
+      const pointerLen = Math.max(16, size * 0.055);
+      const pointerHalfW = Math.max(8, size * 0.026);
+
+      for (let k = 0; k < WINNERS_PER_ROUND; k++) {
+        const style = POINTER_STYLES[k];
+        const angle = -Math.PI / 2 + (k * Math.PI * 2) / WINNERS_PER_ROUND;
+
+        wheelCtx.save();
+        wheelCtx.translate(cx, cy);
+        wheelCtx.rotate(angle);
+
+        // 指標尖端朝內指向轉盤扇區
+        const tipX = outerRadius - pointerLen * 0.35;
+        const baseX = outerRadius + size * 0.035;
+
+        wheelCtx.beginPath();
+        wheelCtx.moveTo(tipX, 0);
+        wheelCtx.lineTo(baseX, -pointerHalfW);
+        wheelCtx.lineTo(baseX, pointerHalfW);
+        wheelCtx.closePath();
+
+        wheelCtx.fillStyle = style.color;
+        wheelCtx.fill();
+        wheelCtx.lineWidth = 2.5;
+        wheelCtx.strokeStyle = '#FFFFFF';
+        wheelCtx.stroke();
+
+        // 指標後方加上 #1 ~ #5 圓章
+        const badgeX = baseX + size * 0.024;
+        wheelCtx.beginPath();
+        wheelCtx.arc(badgeX, 0, Math.max(9, size * 0.024), 0, Math.PI * 2);
+        wheelCtx.fillStyle = style.color;
+        wheelCtx.fill();
+        wheelCtx.lineWidth = 2;
+        wheelCtx.strokeStyle = '#FFFFFF';
+        wheelCtx.stroke();
+
+        wheelCtx.rotate(-angle); // 讓數字保持正向
+        const bx = Math.cos(angle) * badgeX;
+        const by = Math.sin(angle) * badgeX;
+        wheelCtx.fillStyle = '#FFFFFF';
+        wheelCtx.font = `900 ${Math.max(9, size * 0.022)}px "Inter", sans-serif`;
+        wheelCtx.textAlign = 'center';
+        wheelCtx.textBaseline = 'middle';
+        wheelCtx.fillText(`#${style.index}`, bx, by);
+
+        wheelCtx.restore();
+      }
+    }
+
+    /**
+     * ============================================================================
+     * 6. 轉一圈同時選出 5 位核心動畫流程
+     * ============================================================================
+     */
+    function startFiveWinnerSpin() {
+      if (state.isSpinning) return;
+
+      const currentWinners = state.rounds[state.currentRound];
+      const remainingSlots = WINNERS_PER_ROUND - currentWinners.length;
+      const pool = getRemainingPool();
+
+      if (remainingSlots <= 0) {
+        showConfirmDialog({
+          title: `第 ${state.currentRound} 輪已完成`,
+          message: `第 ${state.currentRound} 輪已有 5 位得主！你可以切換到下一輪抽獎，或先「撤銷重抽」調整本輪某位得主。`,
+          confirmText: '前往下一輪',
+          cancelText: '留在第 ' + state.currentRound + ' 輪',
+          onConfirm: () => {
+            if (state.currentRound < TOTAL_ROUNDS) {
+              selectRound(state.currentRound + 1);
+            } else {
+              openWinnersModal();
+            }
+          }
+        });
+        return;
+      }
+
+      if (pool.length === 0) {
+        showConfirmDialog({
+          title: '抽獎名單已空',
+          message: '目前所有參與者都已抽出，無法再進行抽獎。',
+          confirmText: '查看中獎名單',
+          cancelText: '關閉',
+          onConfirm: openWinnersModal
+        });
+        return;
+      }
+
+      const drawCount = Math.min(remainingSlots, pool.length);
+      state.isSpinning = true;
+      state.highlightedWinnerIds.clear();
+      updateUI();
+
+      // 決定本次轉動總角度（至少轉 6~8 圈，並加入隨機角度）
+      const startAngle = state.wheelAngle;
+      const extraSpins = (6 + Math.floor(Math.random() * 3)) * Math.PI * 2;
+      const randomOffset = Math.random() * Math.PI * 2;
+      const targetAngle = startAngle + extraSpins + randomOffset;
+
+      const duration = 3900; // 約 3.9 秒順暢轉動後定格
+      const startTime = performance.now();
+      const arc = (Math.PI * 2) / pool.length;
+      let lastTickBucket = Math.floor(startAngle / arc);
+
+      // 三次方緩出函數，模擬真實轉盤由快轉慢至停穩
+      const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const eased = easeOutCubic(progress);
+
+        state.wheelAngle = startAngle + (targetAngle - startAngle) * eased;
+
+        // 依轉過的角度觸發清脆刻度音效
+        const currentBucket = Math.floor(state.wheelAngle / arc);
+        if (currentBucket !== lastTickBucket) {
+          lastTickBucket = currentBucket;
+          SoundFX.playTick(1 - progress * 0.65);
+        }
+
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          finishFiveWinnerSpin(pool, drawCount);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    function finishFiveWinnerSpin(pool, drawCount) {
+      // 透過 5 個環繞指標同時取得候選索引，再隨機打亂確保公平性並取出所需名額（通常為 5 位）
+      const pointedIndices = getFivePointedIndices(pool.length, state.wheelAngle);
+      const selectedParticipants = [];
+      const selectedIdSet = new Set();
+
+      pointedIndices.forEach(idx => {
+        const p = pool[idx];
+        if (p && !selectedIdSet.has(p.id) && selectedParticipants.length < drawCount) {
+          selectedParticipants.push(p);
+          selectedIdSet.add(p.id);
+        }
+      });
+
+      // 若遇極端情況數量不足，從剩餘池補足
+      if (selectedParticipants.length < drawCount) {
+        const leftovers = pool.filter(p => !selectedIdSet.has(p.id));
+        for (let i = leftovers.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [leftovers[i], leftovers[j]] = [leftovers[j], leftovers[i]];
+        }
+        for (const p of leftovers) {
+          if (selectedParticipants.length >= drawCount) break;
+          selectedParticipants.push(p);
+          selectedIdSet.add(p.id);
+        }
+      }
+
+      // 填入當前輪次的空缺禮物槽位（1..5）
+      const roundArr = state.rounds[state.currentRound];
+      const usedSlots = new Set(roundArr.map(item => item.slot));
+      const newlyAdded = [];
+
+      selectedParticipants.forEach(participant => {
+        let slotNum = 1;
+        while (usedSlots.has(slotNum) && slotNum <= WINNERS_PER_ROUND) {
+          slotNum++;
+        }
+        usedSlots.add(slotNum);
+        const record = {
+          slot: slotNum,
+          participant,
+          drawnAt: new Date().toLocaleTimeString('zh-Hant', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        };
+        roundArr.push(record);
+        newlyAdded.push(record);
+        state.highlightedWinnerIds.add(participant.id);
+      });
+
+      roundArr.sort((a, b) => a.slot - b.slot);
+
+      state.isSpinning = false;
+      drawWheel();
+      updateUI();
+
+      SoundFX.playWinFanfare();
+      ConfettiSystem.burst(140);
+
+      // 稍微延遲 350ms 讓觀眾先看清轉盤 5 個指標定格，再跳出慶祝揭曉視窗
+      setTimeout(() => {
+        openCelebrationModal(state.currentRound, newlyAdded);
+      }, 350);
+    }
+
+    /**
+     * ============================================================================
+     * 7. 撤銷重抽、切換輪次與整場重設
+     * ============================================================================
+     */
+    function undoWinner(roundNum, participantId) {
+      if (state.isSpinning) return;
+
+      const arr = state.rounds[roundNum];
+      const target = arr.find(item => item.participant.id === participantId);
+      if (!target) return;
+
+      showConfirmDialog({
+        title: `撤銷第 ${roundNum} 輪中獎紀錄`,
+        message: `確定要撤銷「${target.participant.name}」的中獎資格嗎？撤銷後該名額會退回抽獎池，你可重新轉盤抽出遞補得主。`,
+        confirmText: '確認撤銷',
+        cancelText: '保留得主',
+        onConfirm: () => {
+          state.rounds[roundNum] = state.rounds[roundNum].filter(
+            item => item.participant.id !== participantId
+          );
+          state.highlightedWinnerIds.delete(participantId);
+          SoundFX.playUndo();
+          updateUI();
+          drawWheel();
+          renderWinnersLogModal();
+        }
+      });
+    }
+
+    function selectRound(roundNum) {
+      if (state.isSpinning) return;
+      state.currentRound = Math.max(1, Math.min(TOTAL_ROUNDS, roundNum));
+      state.highlightedWinnerIds.clear();
+      updateUI();
+      drawWheel();
+    }
+
+    function resetAllDraws() {
+      if (state.isSpinning) return;
+
+      showConfirmDialog({
+        title: '重設全部 4 輪抽獎紀錄',
+        message: '這會清除所有已抽出的 4 輪中獎名單，並將全部 59 位參與者恢復至抽獎池。確定要重新開始嗎？',
+        confirmText: '全部重設',
+        cancelText: '取消',
+        onConfirm: () => {
+          state.rounds = { 1: [], 2: [], 3: [], 4: [] };
+          state.currentRound = 1;
+          state.highlightedWinnerIds.clear();
+          state.wheelAngle = 0;
+          SoundFX.playUndo();
+          updateUI();
+          drawWheel();
+          renderWinnersLogModal();
+        }
+      });
+    }
+
+    /**
+     * ============================================================================
+     * 8. 介面渲染（輪次列、右側 5 份禮物看板、總覽彈窗、複製文字）
+     * ============================================================================
+     */
+    function getCategoryBadge(category) {
+      if (category === 'family') {
+        return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-skyTravel-100 text-skyTravel-700">親子家庭</span>';
+      }
+      if (category === 'teacher') {
+        return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-amberSunny-100 text-amber-800">教師</span>';
+      }
+      return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-mintBadge-100 text-mintBadge-700">校友</span>';
+    }
+
+    function renderRoundTabs() {
+      const nav = document.querySelector('nav[aria-label="抽獎輪次選擇"]');
+      nav.innerHTML = '';
+
+      for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+        const count = state.rounds[r].length;
+        const isActive = state.currentRound === r;
+        const isCompleted = count >= WINNERS_PER_ROUND;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.disabled = state.isSpinning;
+        btn.className = `btn-tactile min-h-[54px] sm:min-h-[60px] px-2.5 sm:px-4 py-2 rounded-2xl border-2 transition flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 cursor-pointer disabled:opacity-60 ${
+          isActive
+            ? 'bg-gradient-to-r from-skyTravel-500 to-skyTravel-600 text-white border-skyTravel-600 shadow-md scale-[1.01]'
+            : isCompleted
+            ? 'bg-mintBadge-50 hover:bg-mintBadge-100 text-mintBadge-700 border-mintBadge-300'
+            : 'bg-white/90 hover:bg-white text-slate-700 border-slate-200'
+        }`;
+
+        btn.innerHTML = `
+          <span class="font-black text-sm sm:text-base">第 ${r} 輪</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-extrabold tabular-nums ${
+            isActive
+              ? 'bg-white/25 text-white'
+              : isCompleted
+              ? 'bg-mintBadge-500 text-white'
+              : 'bg-slate-100 text-slate-600'
+          }">${count}/${WINNERS_PER_ROUND}</span>
+        `;
+
+        btn.addEventListener('click', () => selectRound(r));
+        nav.appendChild(btn);
+      }
+    }
+
+    function renderCurrentRoundPanel() {
+      const r = state.currentRound;
+      const winners = state.rounds[r];
+      const remainingInRound = WINNERS_PER_ROUND - winners.length;
+
+      document.getElementById('currentRoundPill').textContent = `第 ${r} 輪`;
+      document.getElementById('panelRoundTitle').innerHTML = `<span>🎁</span><span>第 ${r} 輪中獎名單</span>`;
+      document.getElementById('roundSlotsCounter').textContent = `${winners.length} / ${WINNERS_PER_ROUND} 位`;
+
+      const statusEl = document.getElementById('roundStatusText');
+      if (remainingInRound === 5) {
+        statusEl.textContent = '本輪需抽出 5 位幸運得主（轉一圈同時選出）';
+      } else if (remainingInRound > 0) {
+        statusEl.textContent = `本輪尚缺 ${remainingInRound} 位，按抽獎可補齊名額`;
+      } else {
+        statusEl.textContent = '本輪 5 個禮物已全數抽出！';
+      }
+
+      // 主抽獎按鈕文字
+      const drawBtnText = document.getElementById('primaryDrawBtnText');
+      if (remainingInRound === 5) {
+        drawBtnText.textContent = `第 ${r} 輪開始抽獎（一次抽 5 位）`;
+      } else if (remainingInRound > 0) {
+        drawBtnText.textContent = `第 ${r} 輪補抽剩餘 ${remainingInRound} 位`;
+      } else {
+        drawBtnText.textContent = `第 ${r} 輪已完成（5/5 位）`;
+      }
+
+      const primaryBtn = document.getElementById('primaryDrawBtn');
+      const centerBtn = document.getElementById('centerSpinBtn');
+      const canSpin = !state.isSpinning && remainingInRound > 0 && getRemainingPool().length > 0;
+      primaryBtn.disabled = !canSpin;
+      centerBtn.disabled = !canSpin;
+
+      // 下一輪按鈕狀態
+      const nextBtn = document.getElementById('nextRoundQuickBtn');
+      nextBtn.disabled = state.isSpinning || r >= TOTAL_ROUNDS;
+
+      // 渲染 5 個禮物槽位
+      const listEl = document.getElementById('roundWinnersList');
+      listEl.innerHTML = '';
+
+      for (let slot = 1; slot <= WINNERS_PER_ROUND; slot++) {
+        const entry = winners.find(w => w.slot === slot);
+        const pStyle = POINTER_STYLES[slot - 1];
+
+        const row = document.createElement('div');
+        if (entry) {
+          const isNewHighlight = state.highlightedWinnerIds.has(entry.participant.id);
+          row.className = `flex items-center justify-between gap-2.5 p-3 rounded-2xl border-2 transition ${
+            isNewHighlight
+              ? 'bg-amberSunny-50 border-amberSunny-400 shadow-sm'
+              : 'bg-white border-skyTravel-100'
+          }`;
+          row.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-9 h-9 rounded-xl ${pStyle.badgeBg} text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm">
+                #${slot}
+              </span>
+              <div class="min-w-0">
+                <div class="font-black text-slate-800 text-base sm:text-lg truncate">
+                  ${escapeHtml(entry.participant.name)}
+                </div>
+                <div class="flex items-center gap-2 mt-0.5">
+                  ${getCategoryBadge(entry.participant.category)}
+                  <span class="text-[11px] text-slate-400 font-medium">${entry.drawnAt}</span>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn-tactile shrink-0 min-h-[44px] px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-extrabold text-xs sm:text-sm flex items-center gap-1 transition cursor-pointer"
+              title="撤銷此位中獎並退回抽獎池"
+            >
+              <span>↩️</span>
+              <span>撤銷重抽</span>
+            </button>
+          `;
+          const undoBtn = row.querySelector('button');
+          undoBtn.addEventListener('click', () => undoWinner(r, entry.participant.id));
+        } else {
+          row.className =
+            'flex items-center justify-between gap-2.5 p-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/70';
+          row.innerHTML = `
+            <div class="flex items-center gap-3">
+              <span class="w-9 h-9 rounded-xl bg-slate-200 text-slate-500 font-black text-sm flex items-center justify-center shrink-0">
+                #${slot}
+              </span>
+              <span class="text-sm font-bold text-slate-400">第 ${slot} 份禮物・待抽出</span>
+            </div>
+            <span class="text-xs font-bold text-slate-300">未抽</span>
+          `;
+        }
+        listEl.appendChild(row);
+      }
+    }
+
+    function renderHeaderStats() {
+      const remaining = getRemainingPool().length;
+      const totalWon = getTotalWinnersCount();
+      document.getElementById('remainingBadge').textContent = String(remaining);
+      document.getElementById('totalWonBadge').textContent = String(totalWon);
+      document.getElementById('poolCountBtnText').textContent = String(remaining);
+      document.getElementById('poolModalCount').textContent = String(remaining);
+    }
+
+    function updateUI() {
+      renderHeaderStats();
+      renderRoundTabs();
+      renderCurrentRoundPanel();
+    }
+
+    /**
+     * ============================================================================
+     * 9. 慶祝視窗、全部 4 輪總覽視窗與一鍵複製功能
+     * ============================================================================
+     */
+    function openCelebrationModal(roundNum, newlyAdded) {
+      const modal = document.getElementById('celebrationModal');
+      document.getElementById('modalRoundBadge').textContent = `・第 ${roundNum} 輪`;
+      document.getElementById('modalTitleText').textContent =
+        newlyAdded.length === 5
+          ? '恭喜本輪 5 位幸運得主！'
+          : `恭喜抽出 ${newlyAdded.length} 位遞補得主！`;
+
+      const grid = document.getElementById('modalWinnersGrid');
+      grid.innerHTML = '';
+
+      newlyAdded.forEach(item => {
+        const pStyle = POINTER_STYLES[(item.slot - 1) % POINTER_STYLES.length];
+        const card = document.createElement('div');
+        card.className =
+          'flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-amberSunny-50 to-skyTravel-50 border-2 border-amberSunny-200';
+        card.innerHTML = `
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-10 h-10 rounded-xl ${pStyle.badgeBg} text-white font-black text-base flex items-center justify-center shrink-0 shadow">
+              #${item.slot}
+            </span>
+            <div class="min-w-0">
+              <div class="text-lg sm:text-xl font-black text-slate-800 truncate">
+                ${escapeHtml(item.participant.name)}
+              </div>
+              <div class="mt-0.5">${getCategoryBadge(item.participant.category)}</div>
+            </div>
+          </div>
+          <span class="text-2xl shrink-0">🎁</span>
+        `;
+        grid.appendChild(card);
+      });
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeCelebrationModal() {
+      const modal = document.getElementById('celebrationModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function renderWinnersLogModal() {
+      const totalWon = getTotalWinnersCount();
+      const remaining = getRemainingPool().length;
+      document.getElementById('logSummarySubtext').textContent =
+        `已抽出 ${totalWon} / 20 位・剩餘抽獎池 ${remaining} 人`;
+
+      const container = document.getElementById('allRoundsLogContainer');
+      container.innerHTML = '';
+
+      for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+        const roundWinners = state.rounds[r];
+        const box = document.createElement('div');
+        box.className = 'rounded-2xl border-2 border-skyTravel-100 bg-skyTravel-50/40 p-4 flex flex-col gap-2.5';
+
+        let slotsHtml = '';
+        for (let slot = 1; slot <= WINNERS_PER_ROUND; slot++) {
+          const found = roundWinners.find(w => w.slot === slot);
+          if (found) {
+            slotsHtml += `
+              <div class="flex items-center justify-between gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200/80 shadow-2xs">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-7 h-7 rounded-lg bg-coralTravel-500 text-white font-black text-xs flex items-center justify-center shrink-0">
+                    ${slot}
+                  </span>
+                  <span class="font-extrabold text-slate-800 text-sm sm:text-base truncate">
+                    ${escapeHtml(found.participant.name)}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  data-undo-round="${r}"
+                  data-undo-id="${found.participant.id}"
+                  class="btn-tactile shrink-0 min-h-[38px] px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs transition cursor-pointer"
+                >
+                  撤銷重抽
+                </button>
+              </div>
+            `;
+          } else {
+            slotsHtml += `
+              <div class="flex items-center gap-2.5 bg-white/60 px-3 py-2 rounded-xl border border-dashed border-slate-200 text-slate-400 text-sm font-medium">
+                <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-500 font-bold text-xs flex items-center justify-center shrink-0">
+                  ${slot}
+                </span>
+                <span>第 ${slot} 份禮物（尚未抽出）</span>
+              </div>
+            `;
+          }
+        }
+
+        box.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h4 class="font-black text-base sm:text-lg text-skyTravel-700">🎡 第 ${r} 輪（5 份禮物）</h4>
+            <span class="text-xs font-extrabold px-2.5 py-1 rounded-full bg-white text-slate-600 border border-slate-200">
+              ${roundWinners.length} / 5 位
+            </span>
+          </div>
+          <div class="space-y-2">${slotsHtml}</div>
+        `;
+
+        box.querySelectorAll('[data-undo-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const rNum = Number(btn.getAttribute('data-undo-round'));
+            const pId = btn.getAttribute('data-undo-id');
+            undoWinner(rNum, pId);
+          });
+        });
+
+        container.appendChild(box);
+      }
+    }
+
+    function openWinnersModal() {
+      document.getElementById('copyFeedbackBanner').classList.add('hidden');
+      renderWinnersLogModal();
+      const modal = document.getElementById('winnersLogModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeWinnersModal() {
+      const modal = document.getElementById('winnersLogModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function formatWinnersForClipboard() {
+      const lines = [
+        '【2627年度親子旅行抽獎】中獎名單總覽',
+        `總計已抽出：${getTotalWinnersCount()} / 20 位（剩餘抽獎池：${getRemainingPool().length} 人）`,
+        '----------------------------------------'
+      ];
+
+      for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+        lines.push(`🎡 第 ${r} 輪：`);
+        const arr = state.rounds[r];
+        for (let slot = 1; slot <= WINNERS_PER_ROUND; slot++) {
+          const item = arr.find(w => w.slot === slot);
+          lines.push(`  ${slot}. ${item ? item.participant.name : '（尚未抽出）'}`);
+        }
+        lines.push('');
+      }
+
+      return lines.join('\n').trim();
+    }
+
+    function copyAllWinnersToClipboard() {
+      const text = formatWinnersForClipboard();
+      const banner = document.getElementById('copyFeedbackBanner');
+
+      // 優先使用相容性高的 execCommand，失敗再嘗試 clipboard API
+      let copied = false;
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-9999px';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } catch (e) {
+        copied = false;
+      }
+
+      if (copied) {
+        banner.textContent = '✅ 已複製全部 4 輪中獎名單到剪貼簿，可直接貼上使用！';
+        banner.classList.remove('hidden');
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          banner.textContent = '✅ 已複製全部 4 輪中獎名單到剪貼簿，可直接貼上使用！';
+          banner.classList.remove('hidden');
+        }).catch(() => {
+          banner.textContent = '⚠️ 無法自動複製，請手動選取名單文字複製。';
+          banner.classList.remove('hidden');
+        });
+      }
+    }
+
+    function openPoolModal() {
+      const pool = getRemainingPool();
+      const grid = document.getElementById('poolListGrid');
+      grid.innerHTML = '';
+
+      if (pool.length === 0) {
+        grid.innerHTML = '<p class="col-span-full text-center text-slate-500 font-bold py-8">目前抽獎池已無剩餘人員。</p>';
+      } else {
+        pool.forEach((p, idx) => {
+          const item = document.createElement('div');
+          item.className = 'flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm font-bold text-slate-700';
+          item.innerHTML = `
+            <span class="truncate"><span class="text-slate-400 mr-1">${idx + 1}.</span>${escapeHtml(p.name)}</span>
+            ${getCategoryBadge(p.category)}
+          `;
+          grid.appendChild(item);
+        });
+      }
+
+      const modal = document.getElementById('poolModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closePoolModal() {
+      const modal = document.getElementById('poolModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // 自訂確認對話框（取代 alert/confirm）
+    let pendingConfirmCallback = null;
+    function showConfirmDialog({ title, message, confirmText = '確定', cancelText = '取消', onConfirm }) {
+      document.getElementById('confirmTitle').textContent = title;
+      document.getElementById('confirmMessage').textContent = message;
+      document.getElementById('confirmOkBtn').textContent = confirmText;
+      document.getElementById('confirmCancelBtn').textContent = cancelText;
+      pendingConfirmCallback = onConfirm || null;
+
+      const dlg = document.getElementById('confirmDialog');
+      dlg.classList.remove('hidden');
+      dlg.classList.add('flex');
+    }
+
+    function hideConfirmDialog() {
+      pendingConfirmCallback = null;
+      const dlg = document.getElementById('confirmDialog');
+      dlg.classList.add('hidden');
+      dlg.classList.remove('flex');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * ============================================================================
+     * 10. 事件綁定與初始化
+     * ============================================================================
+     */
+    function bindEvents() {
+      document.getElementById('primaryDrawBtn').addEventListener('click', startFiveWinnerSpin);
+      document.getElementById('centerSpinBtn').addEventListener('click', startFiveWinnerSpin);
+      wheelCanvas.addEventListener('click', startFiveWinnerSpin);
+
+      document.getElementById('nextRoundQuickBtn').addEventListener('click', () => {
+        if (state.currentRound < TOTAL_ROUNDS) {
+          selectRound(state.currentRound + 1);
+        }
+      });
+
+      document.getElementById('resetAllBtn').addEventListener('click', resetAllDraws);
+
+      // 音效開關
+      document.getElementById('soundToggleBtn').addEventListener('click', () => {
+        const nextState = !SoundFX.isEnabled();
+        SoundFX.setEnabled(nextState);
+        document.getElementById('soundIcon').textContent = nextState ? '🔊' : '🔇';
+        document.getElementById('soundLabel').textContent = nextState ? '音效開' : '已靜音';
+        if (nextState) SoundFX.playTick(0.6);
+      });
+
+      // 彈窗開關
+      document.getElementById('closeCelebrationBtn').addEventListener('click', closeCelebrationModal);
+      document.getElementById('openWinnersModalBtn').addEventListener('click', openWinnersModal);
+      document.getElementById('openFullLogBtn').addEventListener('click', openWinnersModal);
+      document.getElementById('closeWinnersModalBtn').addEventListener('click', closeWinnersModal);
+      document.getElementById('doneWinnersModalBtn').addEventListener('click', closeWinnersModal);
+      document.getElementById('copyAllWinnersBtn').addEventListener('click', copyAllWinnersToClipboard);
+
+      document.getElementById('viewPoolBtn').addEventListener('click', openPoolModal);
+      document.getElementById('closePoolModalBtn').addEventListener('click', closePoolModal);
+      document.getElementById('closePoolModalFooterBtn').addEventListener('click', closePoolModal);
+
+      document.getElementById('confirmCancelBtn').addEventListener('click', hideConfirmDialog);
+      document.getElementById('confirmOkBtn').addEventListener('click', () => {
+        const cb = pendingConfirmCallback;
+        hideConfirmDialog();
+        if (typeof cb === 'function') cb();
+      });
+
+      // 螢幕旋轉或視窗縮放時重繪轉盤
+      window.addEventListener('resize', () => {
+        drawWheel();
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      bindEvents();
+      updateUI();
+      drawWheel();
+    });
+  </script>
+</body>
+</html>
