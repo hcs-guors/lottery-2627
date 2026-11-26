@@ -183,7 +183,7 @@
             </span>
           </div>
           <p class="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
-            共 4 輪・每輪 5 份禮物（合計 20 位）・不重複中獎・人頭計算（初始 59 人）
+            共 4 輪・每輪 5 份禮物（合計 20 位）・不重複中獎・人頭計算（初始 60 人）
           </p>
         </div>
       </div>
@@ -193,8 +193,8 @@
         <!-- 剩餘人數徽章 -->
         <div class="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-skyTravel-50 border border-skyTravel-200">
           <span class="text-xs font-bold text-skyTravel-600">剩餘池</span>
-          <span id="remainingBadge" class="text-lg sm:text-xl font-black text-skyTravel-600 tabular-nums">59</span>
-          <span class="text-xs font-bold text-slate-400">/ 59</span>
+          <span id="remainingBadge" class="text-lg sm:text-xl font-black text-skyTravel-600 tabular-nums">60</span>
+          <span class="text-xs font-bold text-slate-400">/ 60</span>
         </div>
 
         <!-- 已抽總數徽章 -->
@@ -264,7 +264,7 @@
             type="button"
             class="text-xs sm:text-sm font-extrabold text-skyTravel-600 hover:text-skyTravel-700 bg-skyTravel-50 hover:bg-skyTravel-100 px-3 py-1.5 rounded-xl border border-skyTravel-200 transition cursor-pointer"
           >
-            👥 檢視名單（<span id="poolCountBtnText">59</span>人）
+            👥 檢視名單（<span id="poolCountBtnText">60</span>人）
           </button>
         </div>
 
@@ -404,7 +404,7 @@
             <span>全部 4 輪中獎名單總覽（共 20 人）</span>
           </h3>
           <p id="logSummarySubtext" class="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
-            已抽出 0 / 20 位・剩餘抽獎池 59 人
+            已抽出 0 / 20 位・剩餘抽獎池 60 人
           </p>
         </div>
         <button
@@ -454,7 +454,7 @@
       <div class="px-5 py-4 bg-skyTravel-50 border-b border-skyTravel-100 flex items-center justify-between gap-3">
         <div>
           <h3 class="text-lg sm:text-xl font-black text-slate-800">
-            👥 目前剩餘抽獎池名單（<span id="poolModalCount">59</span> 位）
+            👥 目前剩餘抽獎池名單（<span id="poolModalCount">60</span> 位）
           </h3>
           <p class="text-xs sm:text-sm text-slate-500 font-medium">
             家庭成員已依個人資料姓名精準拆分；已中獎者會自動移出
@@ -513,8 +513,8 @@
   <script>
     /**
      * ============================================================================
-     * 1. 名單資料建構（依個人資料檔案對應學生與家人姓名，人頭計算）
-     *    總計：29 位家長及學生 + 28 位教師 + 2 位校友 = 59 人
+     * 1. 名單資料建構（依個人資料檔案對應學生與家人姓名，另加 Manish，人頭計算）
+     *    總計：29 位家長及學生 + 28 位教師 + 2 位校友 + 1 位 Manish = 60 人
      * ============================================================================
      */
     function buildInitialParticipants() {
@@ -525,7 +525,7 @@
         list.push({
           id: `p_${uidCounter++}`,
           name,
-          category // 'family' | 'teacher' | 'alumni'
+          category // 'family' | 'teacher' | 'alumni' | 'other'
         });
       };
 
@@ -538,7 +538,7 @@
         '1B(24)陳玥同家人 王娜',
         '1B(31)劉士熙',
         '1B(31)劉士熙家人 陳曉敏',
-        '1B(31)劉士熙家人 劉彥端',
+        '1B(31)劉彥端',
         '2A(2)陳文杰',
         '2A(2)陳文杰家人 李韻芳',
         '2A(8)何国强',
@@ -547,11 +547,11 @@
         '2C(8)李江藍家人 张慧玉',
         '3A(2)卜佳豪',
         '3A(2)卜佳豪家人 王彦芳',
-        '3A(2)卜佳豪家人 卜佑珏',
-        '3A(2)卜佳豪家人 卜海军',
+        '3A(2)卜佑珏',
+        '3A(2)卜海军',
         '3A(4)陳雅睿',
         '3A(4)陳雅睿家人 陈映航',
-        '3A(4)陳雅睿家人 梁媚',
+        '3A(4)梁媚',
         '3A(25)楊振琪',
         '3A(25)楊振琪家人 周清清',
         '3A(36)汪启中',
@@ -577,6 +577,9 @@
       // 2 位校友
       const alumni = ['司徒智誠先生', '孫嘉霖先生'];
       alumni.forEach(name => pushPerson(name, 'alumni'));
+
+      // 新增參與者 Manish（總計 60 人）
+      pushPerson('Manish', 'other');
 
       return list;
     }
@@ -1240,7 +1243,7 @@
 
       showConfirmDialog({
         title: '重設全部 4 輪抽獎紀錄',
-        message: '這會清除所有已抽出的 4 輪中獎名單，並將全部 59 位參與者恢復至抽獎池。確定要重新開始嗎？',
+        message: '這會清除所有已抽出的 4 輪中獎名單，並將全部 60 位參與者恢復至抽獎池。確定要重新開始嗎？',
         confirmText: '全部重設',
         cancelText: '取消',
         onConfirm: () => {
@@ -1268,7 +1271,10 @@
       if (category === 'teacher') {
         return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-amberSunny-100 text-amber-800">教師</span>';
       }
-      return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-mintBadge-100 text-mintBadge-700">校友</span>';
+      if (category === 'alumni') {
+        return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-mintBadge-100 text-mintBadge-700">校友</span>';
+      }
+      return '<span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-amberSunny-100 text-amber-800">參與者</span>';
     }
 
     function renderRoundTabs() {
